@@ -12,7 +12,7 @@ app.use(express.json());
 
 // mongodb uri and client
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.nuhoilk.mongodb.net/?retryWrites=true&w=majority`;
-// console.log(uri);
+console.log(uri);
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -29,6 +29,10 @@ const run = async () => {
 
     const commentCollection = client.db("endgame1").collection("comment");
 
+    // user collection
+
+    const userCollection = client.db("endgame1").collection("user");
+
     // post data POST
     app.post("/post", async (req, res) => {
       const post = req.body;
@@ -42,6 +46,7 @@ const run = async () => {
       const result = await postsCollection.find(query).toArray();
       res.send(result);
     });
+
     // get each data details from db
     app.get("/post/:id", async (req, res) => {
       const id = req.params.id;
@@ -80,6 +85,29 @@ const run = async () => {
       const cursor = postsCollection.find(query);
       const posts = await cursor.limit(size).sort({ date: -1 }).toArray();
       res.send(posts);
+    });
+
+    // User data post
+    app.post("/user", async (req, res) => {
+      const post = req.body;
+      const result = await userCollection.insertOne(post);
+      res.send(result);
+    });
+
+    // user data get
+
+    app.get("/userInfo", async (req, res) => {
+      const email = req.query;
+      const result = await userCollection.findOne(email);
+      // console.log(result);
+      res.send(result);
+    });
+
+    app.put("/EditProfile", async (req, res) => {
+      const email = req.query;
+      console.log(email);
+      const result = await userCollection.findOne(email);
+      // res.send(result);
     });
   } catch {}
 };
