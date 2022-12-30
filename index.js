@@ -75,6 +75,7 @@ const run = async () => {
       const query = { postId: id };
       const postId = commentCollection.find(query).sort({ date: -1 });
       const result = await postId.toArray();
+      console.log(id);
       res.send(result);
     });
 
@@ -111,7 +112,6 @@ const run = async () => {
       const updatedUser = {
         $set: {
           userName: user.userName,
-          userEmail: user.userEmail,
           userPhoto: user.userPhoto,
           location: user.location,
         },
