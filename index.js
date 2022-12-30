@@ -103,11 +103,26 @@ const run = async () => {
       res.send(result);
     });
 
-    app.put("/EditProfile", async (req, res) => {
-      const email = req.query;
-      console.log(email);
-      const result = await userCollection.findOne(email);
-      // res.send(result);
+    app.put("/EditProfile/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const user = req.body;
+      const option = { upsert: true };
+      const updatedUser = {
+        $set: {
+          userName: user.userName,
+          userEmail: user.userEmail,
+          userPhoto: user.userPhoto,
+          location: user.location,
+        },
+      };
+      const result = await userCollection.updateOne(
+        filter,
+        updatedUser,
+        option
+      );
+      res.send(result);
+      // console.log(updatedUser);
     });
   } catch {}
 };
